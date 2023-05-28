@@ -1,0 +1,30 @@
+1.Window:
+    Use the title() method to change the title of the window.
+    Use the geometry() method to change the size and location of the window.
+    Use the resizable() method to specify whether a window can be resizable horizontally or vertically.
+    Use the window.attributes('-alpha',0.5) to set the transparency for the window.
+    Use the window.attributes('-topmost', 1) to make the window always on top.
+    Use lift() and lower() methods to move the window up and down of the window stacking order.
+    Use the iconbitmap() method to change the default icon of the window.
+2.Widgets:
+    The following ttk widgets replace the Tkinkter widgets with the same names:
+        Button
+        Checkbutton
+        Entry
+        Frame
+        Label
+        LabelFrame
+        Menubutton
+        PanedWindow
+        Radiobutton
+        Scale
+        Scrollbar
+        Spinbox
+    And the following widgets are new and specific to ttk:
+        Combobox
+        Notebook
+        Progressbar
+        Separator
+        Sizegrip
+        Treeview
+3. Event binding: https://www.pythontutorial.net/tkinter/tkinter-event-binding/
