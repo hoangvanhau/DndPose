@@ -140,7 +140,7 @@ class HumanPose(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     im_path = './assets/man.png'
-    loadedIm= tk.PhotoImage(file=im_path')
+    loadedIm= tk.PhotoImage(file=im_path)
     humanpose = HumanPose(root, loadedIm)
     humanpose.pack(fill="both", expand=True)
 
