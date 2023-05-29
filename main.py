@@ -81,9 +81,11 @@ class HumanPose(tk.Frame):
     def drag_start(self, event):
         """Begining drag of an object"""
         # record the item and its location
-        self._drag_data["item"] = self.canvas.find_closest(event.x, event.y)[0]
-        self._drag_data["x"] = event.x
-        self._drag_data["y"] = event.y
+        item_id = self.canvas.find_closest(event.x, event.y)[0]
+        if "token" in self.canvas.gettags(item_id):
+            self._drag_data["item"] = item_id
+            self._drag_data["x"] = event.x
+            self._drag_data["y"] = event.y
 
     def drag_stop(self, event):
         """End drag of an object"""
@@ -93,38 +95,34 @@ class HumanPose(tk.Frame):
         self._drag_data["y"] = 0
     def drag(self, event):
         target_widget = self.canvas.winfo_containing(event.x_root, event.y_root)
-        if target_widget is not None:
+        if target_widget is not None and self._drag_data["item"] is not None:
             """Handle dragging of an object"""
             # compute how much the mouse has moved
             delta_x = event.x - self._drag_data["x"]
             delta_y = event.y - self._drag_data["y"]
             # move the object the appropriate amount
             self.canvas.move(self._drag_data["item"], delta_x, delta_y)
-            point_tag = self.canvas.gettags(self._drag_data["item"])[1]
-            connected_lines = self._point_pair[point_tag]
-            modified_point = self.canvas.find_withtag(point_tag)
-            modified_point_coords = self.canvas.coords(modified_point)
-            x_p, y_p = self.getCenterPoint(modified_point_coords)
-            for line in connected_lines:
-                modified_line = self.canvas.find_withtag(line)[0]
+            if len(self.canvas.gettags(self._drag_data["item"])) > 1:
+                point_tag = self.canvas.gettags(self._drag_data["item"])[1]
+                self.canvas.gettags(self._drag_data["item"])[1]
+                connected_lines = self._point_pair[point_tag]
+                modified_point = self.canvas.find_withtag(point_tag)
+                modified_point_coords = self.canvas.coords(modified_point)
+                x_p, y_p = self.getCenterPoint(modified_point_coords)
+                for line in connected_lines:
+                    modified_line = self.canvas.find_withtag(line)[0]
 
-                x0, y0, x1, y1 = self.canvas.coords(modified_line)
-                if line.split('_')[1].split(',')[0] == point_tag.split('_')[1]:
-                    self.canvas.coords(line, x_p, y_p, x1, y1)
-                else:
-                    self.canvas.coords(line,x0, y0, x_p, y_p)
-            for i in range(len(self.pairs_point)):
-                if isinstance(self.pairs_point[i], str):
-                    p1_idx, p2_idx = self.pairs_point[i].split(',')
+                    x0, y0, x1, y1 = self.canvas.coords(modified_line)
+                    if line.split('_')[1].split(',')[0] == point_tag.split('_')[1]:
+                        self.canvas.coords(line, x_p, y_p, x1, y1)
+                    else:
+                        self.canvas.coords(line,x0, y0, x_p, y_p)
+                for i in range(len(self.pairs_point)):
+                    if isinstance(self.pairs_point[i], str):
+                        p1_idx, p2_idx = self.pairs_point[i].split(',')
 
-            self._drag_data["x"] = event.x
-            self._drag_data["y"] = event.y
-    def getter(self, file):
-            x=self.parent.winfo_rootx()+self.winfo_x()
-            y=self.parent.winfo_rooty()+self.winfo_y()
-            x1=x+self.winfo_width()
-            y1=y+self.winfo_height()
-            ImageGrab.grab().crop((x,y,x1,y1)).save(file)
+                self._drag_data["x"] = event.x
+                self._drag_data["y"] = event.y
 
     def export(self):
         blank = Image.new(mode="RGB", size=(self.width, self.height))
@@ -141,7 +139,8 @@ class HumanPose(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    loadedIm= tk.PhotoImage(file='./assets/man.png')
+    im_path = './assets/man.png'
+    loadedIm= tk.PhotoImage(file=im_path')
     humanpose = HumanPose(root, loadedIm)
     humanpose.pack(fill="both", expand=True)
 
@@ -168,7 +167,5 @@ if __name__ == "__main__":
     download_button.pack(
         expand=True
     )
-
+    root.resizable(False, False)
     root.mainloop()
-
-    print('Hello world')
